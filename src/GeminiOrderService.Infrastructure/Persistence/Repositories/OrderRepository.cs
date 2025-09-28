@@ -1,10 +1,11 @@
 using System.Linq.Expressions;
+using GeminiOrderService.Application.Common.Interfaces;
 using GeminiOrderService.Domain.Orders;
 using Microsoft.EntityFrameworkCore;
 
 namespace GeminiOrderService.Infrastructure.Persistence.Repositories;
 
-public sealed class OrderRepository : BaseRepository
+public sealed class OrderRepository : BaseRepository, IOrderRepository
 {
     public OrderRepository(GeminiOrderDbContext context) : base(context)
     {
@@ -27,6 +28,7 @@ public sealed class OrderRepository : BaseRepository
         int totalRecords = await query.CountAsync(cancellationToken);
 
         List<Order> orders = await query
+            .Include(o => o.Items)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

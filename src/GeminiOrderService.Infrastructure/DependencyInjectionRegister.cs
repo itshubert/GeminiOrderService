@@ -1,5 +1,7 @@
+using GeminiOrderService.Application.Common.Interfaces;
 using GeminiOrderService.Infrastructure.Interceptors;
 using GeminiOrderService.Infrastructure.Persistence;
+using GeminiOrderService.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +19,7 @@ public static class DependencyInjectionRegister
         });
 
         services.AddScoped<PublishDomainEventsInterceptor>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
 
         return services;
     }
