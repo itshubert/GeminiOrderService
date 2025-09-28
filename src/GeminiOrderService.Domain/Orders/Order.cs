@@ -1,18 +1,24 @@
 using ErrorOr;
 using GeminiOrderService.Domain.Models;
+using GeminiOrderService.Domain.Orders.Entities;
+using GeminiOrderService.Domain.Orders.ValueObjects;
 
 namespace GeminiOrderService.Domain.Orders;
 
-public sealed class Order : AggregateRoot<Guid>
+public sealed class Order : AggregateRoot<OrderId>
 {
+    private readonly List<OrderItem> _orderItems = new();
+
     public Guid CustomerId { get; private set; }
     public Price TotalAmount { get; private set; }
     public DateTimeOffset OrderDate { get; private set; }
     public string Status { get; private set; }
     public string Currency { get; private set; }
 
+    public IReadOnlyList<OrderItem> Items => _orderItems.AsReadOnly();
+
     private Order(
-        Guid id,
+        OrderId id,
         Guid customerId,
         Price totalAmount,
         DateTimeOffset orderDate,
@@ -32,7 +38,7 @@ public sealed class Order : AggregateRoot<Guid>
 #pragma warning restore CS8618
 
     public static ErrorOr<Order> Create(
-        Guid? id,
+        OrderId? id,
         Guid customerId,
         decimal totalAmount,
         DateTimeOffset orderDate,
@@ -67,7 +73,7 @@ public sealed class Order : AggregateRoot<Guid>
         }
 
         return new Order(
-            id ?? Guid.NewGuid(),
+            id ?? OrderId.CreateUnique(),
             customerId,
             priceOrError.Value,
             orderDate,
