@@ -1,7 +1,6 @@
-using ErrorOr;
 using GeminiOrderService.Application.Common.Interfaces;
 using GeminiOrderService.Application.Common.Models.Orders;
-using Mapster;
+using MapsterMapper;
 using MediatR;
 
 namespace GeminiOrderService.Application.Orders.Queries;
@@ -10,13 +9,14 @@ public sealed record GetAllOrdersQuery(
     int PageNumber = 1,
     int PageSize = 10,
     CancellationToken CancellationToken = default
-) : IRequest<ErrorOr<List<OrderModel>>>;
+) : IRequest<IEnumerable<OrderModel>>;
 
 public sealed class GetAllOrdersQueryHandler(
-    IOrderRepository orderRepository
-) : IRequestHandler<GetAllOrdersQuery, ErrorOr<List<OrderModel>>>
+    IOrderRepository orderRepository,
+    IMapper mapper
+) : IRequestHandler<GetAllOrdersQuery, IEnumerable<OrderModel>>
 {
-    public async Task<ErrorOr<List<OrderModel>>> Handle(
+    public async Task<IEnumerable<OrderModel>> Handle(
         GetAllOrdersQuery request,
         CancellationToken cancellationToken)
     {
@@ -25,9 +25,10 @@ public sealed class GetAllOrdersQueryHandler(
             request.PageSize,
             cancellationToken: request.CancellationToken);
 
-        var orderModels = orders.Select(order => order.Adapt<OrderModel>()).ToList();
 
-        return orderModels;
+        var ordersResponse = mapper.Map<IEnumerable<OrderModel>>(orders);
+
+        return ordersResponse;
     }
 }
 

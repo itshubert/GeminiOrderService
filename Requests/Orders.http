@@ -1,0 +1,3 @@
+@HostAddress=https://localhost:4003
+
+GET {{HostAddress}}/orders

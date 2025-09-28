@@ -1,4 +1,4 @@
-namespace GeminiOrderService.Application.Common.Models.Common;
+namespace GeminiOrderService.Application.Common.Models;
 
 /// <summary>
 /// Generic paged result model for application layer
