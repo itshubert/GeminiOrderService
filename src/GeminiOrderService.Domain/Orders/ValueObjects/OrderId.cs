@@ -1,4 +1,4 @@
-using GeminiOrderService.Domain.Models;
+using GeminiOrderService.Domain.Common.Models;
 
 namespace GeminiOrderService.Domain.Orders.ValueObjects;
 
@@ -27,5 +27,5 @@ public sealed class OrderId : ValueObject
     }
 
     // Parameterless constructor for EF Core
-    public OrderId() {}
+    public OrderId() { }
 }

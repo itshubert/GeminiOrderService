@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace GeminiOrderService.Domain.Models;
+namespace GeminiOrderService.Domain.Common.Models;
 
 public interface IDomainEvent : INotification
 {

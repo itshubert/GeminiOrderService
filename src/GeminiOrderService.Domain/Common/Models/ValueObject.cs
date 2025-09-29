@@ -1,4 +1,4 @@
-namespace GeminiOrderService.Domain.Models;
+namespace GeminiOrderService.Domain.Common.Models;
 
 public abstract class ValueObject : IEquatable<ValueObject>
 {

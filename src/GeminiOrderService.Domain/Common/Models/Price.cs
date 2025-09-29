@@ -1,6 +1,6 @@
 using ErrorOr;
 
-namespace GeminiOrderService.Domain.Models;
+namespace GeminiOrderService.Domain.Common.Models;
 
 public sealed class Price
 {

@@ -1,4 +1,4 @@
-using GeminiOrderService.Domain.Models;
+using GeminiOrderService.Domain.Common.Models;
 
 namespace GeminiOrderService.Domain.Orders.ValueObjects;
 
@@ -26,5 +26,5 @@ public sealed class OrderItemId : ValueObject
         yield return Value;
     }
 
-    public OrderItemId() {}
+    public OrderItemId() { }
 }

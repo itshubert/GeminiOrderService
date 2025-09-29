@@ -1,4 +1,4 @@
-using GeminiOrderService.Domain.Models;
+using GeminiOrderService.Domain.Common.Models;
 using GeminiOrderService.Domain.Orders;
 using GeminiOrderService.Domain.Orders.ValueObjects;
 using Microsoft.EntityFrameworkCore;

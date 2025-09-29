@@ -1,4 +1,4 @@
-namespace GeminiOrderService.Domain.Models;
+namespace GeminiOrderService.Domain.Common.Models;
 
 public abstract class Entity<TId> : IEquatable<Entity<TId>>, IHasDomainEvents
     where TId : notnull
@@ -43,7 +43,7 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>>, IHasDomainEvents
     {
         _domainEvents.Add(domainEvent);
     }
-    
+
     public void ClearDomainEvents()
     {
         _domainEvents.Clear();

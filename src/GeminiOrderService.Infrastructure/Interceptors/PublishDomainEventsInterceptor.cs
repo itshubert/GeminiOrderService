@@ -1,4 +1,4 @@
-using GeminiOrderService.Domain.Models;
+using GeminiOrderService.Domain.Common.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

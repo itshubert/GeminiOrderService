@@ -1,5 +1,5 @@
 using ErrorOr;
-using GeminiOrderService.Domain.Models;
+using GeminiOrderService.Domain.Common.Models;
 using GeminiOrderService.Domain.Orders.ValueObjects;
 
 namespace GeminiOrderService.Domain.Orders.Entities;
