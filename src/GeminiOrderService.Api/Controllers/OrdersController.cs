@@ -1,4 +1,5 @@
 using GeminiOrderService.Application.Orders.Queries;
+using GeminiOrderService.Contracts;
 using GeminiOrderService.Contracts.Orders;
 using MapsterMapper;
 using MediatR;
@@ -15,12 +16,24 @@ public sealed class OrdersController : ApiController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetOrders(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetOrders(
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 10,
+        CancellationToken cancellationToken = default)
     {
-        var query = new GetAllOrdersQuery();
-        var response = await Mediator.Send(query, cancellationToken);
+        var query = new GetOrdersQuery(
+            pageNumber,
+            pageSize,
+            cancellationToken);
 
-        return Ok(response);
+        var response = await Mediator.Send(query, cancellationToken);
+        var items = Mapper.Map<IEnumerable<OrderResponse>>(response.Items);
+
+        return Ok(new PagedResultResponse<OrderResponse>(
+            items,
+            response.TotalCount,
+            response.PageNumber,
+            response.PageSize));
     }
 
 }

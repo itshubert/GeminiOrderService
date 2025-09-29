@@ -29,6 +29,7 @@ public sealed class OrderRepository : BaseRepository, IOrderRepository
 
         List<Order> orders = await query
             .Include(o => o.Items)
+            .OrderByDescending(o => o.OrderDate)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);

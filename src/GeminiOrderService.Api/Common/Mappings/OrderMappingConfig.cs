@@ -13,7 +13,7 @@ public class OrderMappingConfig : IRegister
             .Map(dest => dest, src => src);
 
         config.NewConfig<OrderModel, OrderResponse>()
-            .Map(dest => dest.CustomerName, src => $"Customer-{src.CustomerId}") // Placeholder mapping - you may want to fetch actual customer name
-            .Map(dest => dest.Items, src => src.Items.Select(item => item.Adapt<OrderItemResponse>()));
+            .Map(dest => dest.Items, src => src.Items.Select(item => item.Adapt<OrderItemResponse>()))
+            .Map(dest => dest, src => src);
     }
 }

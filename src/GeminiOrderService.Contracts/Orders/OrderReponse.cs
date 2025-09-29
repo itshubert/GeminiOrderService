@@ -2,8 +2,10 @@ namespace GeminiOrderService.Contracts.Orders;
 
 public sealed record OrderResponse(
     Guid Id,
-    DateTime OrderDate,
-    string CustomerName,
+    Guid CustomerId,
+    DateTimeOffset OrderDate,
+    string Status,
     decimal TotalAmount,
+    string Currency,
     IEnumerable<OrderItemResponse> Items
 );
