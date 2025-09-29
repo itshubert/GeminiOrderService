@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GeminiOrderService.Infrastructure.Migrations
 {
     [DbContext(typeof(GeminiOrderDbContext))]
-    [Migration("20250929044856_RemoveOrderItemDescription")]
-    partial class RemoveOrderItemDescription
+    [Migration("20250929065442_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

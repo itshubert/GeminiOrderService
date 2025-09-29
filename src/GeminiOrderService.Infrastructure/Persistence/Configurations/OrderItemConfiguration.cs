@@ -21,23 +21,23 @@ public sealed class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
                 value => OrderItemId.Create(value)
             );
 
-        builder.Property(oi => oi.ProductId)
-            .IsRequired();
-
-        builder.Property(oi => oi.Quantity)
-            .IsRequired();
-
         // Configure the foreign key to Order with proper conversion
-        builder.Property<OrderId>("OrderId")
+        builder.Property(oi => oi.OrderId)
             .IsRequired()
             .HasConversion(
                 orderId => orderId.Value,
                 value => OrderId.Create(value)
             );
 
+        builder.Property(oi => oi.ProductId)
+            .IsRequired();
+
         builder.Property(oi => oi.ProductNameSnapshot)
             .IsRequired()
             .HasMaxLength(200);
+
+        builder.Property(oi => oi.Quantity)
+            .IsRequired();
 
         // Configure UnitPrice value object
         builder.Property(oi => oi.UnitPrice)

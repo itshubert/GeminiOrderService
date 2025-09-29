@@ -12,16 +12,14 @@ Content-Type: application/json
   "currency": "AUD",
   "Items": [
     {
-      "productName": "Widget A",
-      "productId": "d07463d9-659c-44a1-ae75-6d6a28eb30df",
+      "productId": "00d5d543-71a1-4149-ae8b-6695a38d448c",
       "quantity": 2,
-      "unitPrice": 50.00
+      "unitPrice": 89.99
     },
     {
-      "productName": "Widget B",
-      "productId": "ef97b47e-5ccb-4162-a125-042a58cb6137",
+      "productId": "1a308cf3-2bea-45cd-9575-c396db342ad3",
       "quantity": 1,
-      "unitPrice": 50.75
+      "unitPrice": 149.99
     }
   ]
 }

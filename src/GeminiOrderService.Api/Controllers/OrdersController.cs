@@ -47,19 +47,15 @@ public sealed class OrdersController : ApiController
             request.Currency,
             request.Items.Select(i => new CreateOrderItemCommand(
                 i.ProductId,
-                i.ProductName,
                 i.Quantity,
                 i.UnitPrice
             )));
 
         var result = await Mediator.Send(command, cancellationToken);
-        if (result.IsError)
-        {
-            return Problem(result.Errors);
-        }
 
-        var response = Mapper.Map<OrderResponse>(result.Value);
-        return CreatedAtAction(nameof(GetOrders), new { id = response.Id }, response);
+        return result.Match(
+            order => CreatedAtAction(nameof(GetOrders), new { id = order.Id }, order),
+            errors => Problem(errors));
     }
 
 }

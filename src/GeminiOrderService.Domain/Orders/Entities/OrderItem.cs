@@ -6,20 +6,23 @@ namespace GeminiOrderService.Domain.Orders.Entities;
 
 public sealed class OrderItem : Entity<OrderItemId>
 {
+    public OrderId OrderId { get; }
     public Guid ProductId { get; }
+    public string ProductNameSnapshot { get; }
     public int Quantity { get; }
     public Price UnitPrice { get; }
     public Price SubTotal { get; }
-    public string ProductNameSnapshot { get; }
 
     private OrderItem(
         OrderItemId id,
+        OrderId orderId,
         Guid productId,
         int quantity,
         Price unitPrice,
         Price subTotal,
         string productNameSnapshot) : base(id)
     {
+        OrderId = orderId;
         ProductId = productId;
         Quantity = quantity;
         UnitPrice = unitPrice;
@@ -28,6 +31,7 @@ public sealed class OrderItem : Entity<OrderItemId>
     }
 
     public static ErrorOr<OrderItem> Create(
+        OrderId orderId,
         Guid productId,
         int quantity,
         decimal unitPrice,
@@ -35,6 +39,19 @@ public sealed class OrderItem : Entity<OrderItemId>
         string productNameSnapshot)
     {
         List<Error> errors = new();
+
+        if (orderId is null)
+        {
+            errors.Add(Error.Validation(
+                code: "OrderItem.OrderId.Null",
+                description: "Order ID must be provided and cannot be null."));
+        }
+        else if (orderId.Value == Guid.Empty)
+        {
+            errors.Add(Error.Validation(
+                code: "OrderItem.OrderId.Empty",
+                description: "Order ID cannot be empty."));
+        }
 
         if (productId == Guid.Empty)
         {
@@ -77,6 +94,7 @@ public sealed class OrderItem : Entity<OrderItemId>
 
         var orderItem = new OrderItem(
             id: OrderItemId.CreateUnique(),
+            orderId: orderId, // Safe because we validated above
             productId: productId,
             quantity: quantity,
             unitPrice: Price.Create(unitPrice).Value,

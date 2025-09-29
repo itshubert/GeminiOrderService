@@ -1,6 +1,8 @@
 using ErrorOr;
 using GeminiOrderService.Application.Common.Interfaces;
 using GeminiOrderService.Application.Common.Models.Orders;
+using GeminiOrderService.Application.Common.Models.Products;
+using GeminiOrderService.Domain.Common.Errors;
 using GeminiOrderService.Domain.Orders;
 using GeminiOrderService.Domain.Orders.Entities;
 using MapsterMapper;
@@ -15,12 +17,12 @@ public sealed record CreateOrderCommand(
 
 public sealed record CreateOrderItemCommand(
     Guid ProductId,
-    string ProductName,
     int Quantity,
     decimal UnitPrice);
 
 public sealed class CreateOrderCommandHandler(
     IOrderRepository orderRepository,
+    ICatalogService catalogService,
     IMapper mapper
 ) : IRequestHandler<CreateOrderCommand, ErrorOr<OrderModel>>
 {
@@ -28,29 +30,29 @@ public sealed class CreateOrderCommandHandler(
         CreateOrderCommand request,
         CancellationToken cancellationToken)
     {
-        // Create order items first
-        List<OrderItem> orderItems = new();
+        // First, validate all items and collect product information
+        List<(CreateOrderItemCommand itemCommand, ProductSummaryModel product)> validatedItems = new();
         List<Error> allErrors = new();
+        decimal totalAmount = 0;
 
         foreach (var itemCommand in request.Items)
         {
-            var subTotal = itemCommand.Quantity * itemCommand.UnitPrice;
-
-            var orderItemResult = OrderItem.Create(
-                itemCommand.ProductId,
-                itemCommand.Quantity,
-                itemCommand.UnitPrice,
-                subTotal,
-                itemCommand.ProductName);
-
-            if (orderItemResult.IsError)
+            // Validate product exists
+            var product = await catalogService.GetProductInfoAsync(itemCommand.ProductId, cancellationToken);
+            if (product == null)
             {
-                allErrors.AddRange(orderItemResult.Errors);
+                allErrors.Add(Errors.Order.InvalidProductId(itemCommand.ProductId));
+                continue;
             }
-            else
+
+            if (itemCommand.UnitPrice != product.Price)
             {
-                orderItems.Add(orderItemResult.Value);
+                allErrors.Add(Errors.Order.UnitPriceMismatch(itemCommand.ProductId, itemCommand.UnitPrice, product.Price));
+                continue;
             }
+
+            validatedItems.Add((itemCommand, product));
+            totalAmount += itemCommand.Quantity * itemCommand.UnitPrice;
         }
 
         if (allErrors.Count > 0)
@@ -58,14 +60,14 @@ public sealed class CreateOrderCommandHandler(
             return allErrors;
         }
 
-        // Create order with items
-        var orderResult = Order.CreateWithItems(
+        // Create the order first
+        var orderResult = Order.Create(
             id: null, // Will generate unique ID
             request.CustomerId,
+            totalAmount,
             DateTimeOffset.UtcNow,
             "Pending", // Default status
-            request.Currency,
-            orderItems);
+            request.Currency);
 
         if (orderResult.IsError)
         {
@@ -73,6 +75,27 @@ public sealed class CreateOrderCommandHandler(
         }
 
         var order = orderResult.Value;
+
+        // Now create order items with the order ID
+        foreach (var (itemCommand, product) in validatedItems)
+        {
+            var subTotal = itemCommand.Quantity * itemCommand.UnitPrice;
+
+            var orderItemResult = OrderItem.Create(
+                order.Id,
+                itemCommand.ProductId,
+                itemCommand.Quantity,
+                itemCommand.UnitPrice,
+                subTotal,
+                product.Name);
+
+            if (orderItemResult.IsError)
+            {
+                return orderItemResult.Errors;
+            }
+
+            order.AddItem(orderItemResult.Value);
+        }
 
         // Save to repository
         await orderRepository.CreateOrderAsync(order, cancellationToken);
