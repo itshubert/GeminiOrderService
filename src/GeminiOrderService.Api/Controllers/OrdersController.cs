@@ -1,3 +1,4 @@
+using GeminiOrderService.Application.Orders.Commands;
 using GeminiOrderService.Application.Orders.Queries;
 using GeminiOrderService.Contracts;
 using GeminiOrderService.Contracts.Orders;
@@ -34,6 +35,31 @@ public sealed class OrdersController : ApiController
             response.TotalCount,
             response.PageNumber,
             response.PageSize));
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateOrder(
+        [FromBody] CreateOrderRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new CreateOrderCommand(
+            request.CustomerId,
+            request.Currency,
+            request.Items.Select(i => new CreateOrderItemCommand(
+                i.ProductId,
+                i.ProductName,
+                i.Quantity,
+                i.UnitPrice
+            )));
+
+        var result = await Mediator.Send(command, cancellationToken);
+        if (result.IsError)
+        {
+            return Problem(result.Errors);
+        }
+
+        var response = Mapper.Map<OrderResponse>(result.Value);
+        return CreatedAtAction(nameof(GetOrders), new { id = response.Id }, response);
     }
 
 }

@@ -80,5 +80,77 @@ public sealed class Order : AggregateRoot<OrderId>
             status,
             currency);
     }
+
+    public void AddItem(OrderItem orderItem)
+    {
+        _orderItems.Add(orderItem);
+    }
+
+    public void RemoveItem(OrderItem orderItem)
+    {
+        _orderItems.Remove(orderItem);
+    }
+
+    public static ErrorOr<Order> CreateWithItems(
+        OrderId? id,
+        Guid customerId,
+        DateTimeOffset orderDate,
+        string status,
+        string currency,
+        IEnumerable<OrderItem> orderItems)
+    {
+        List<Error> errors = new();
+
+        if (string.IsNullOrWhiteSpace(status))
+        {
+            errors.Add(Error.Validation(
+                code: "Order.Status.Invalid",
+                description: "The order status cannot be empty."));
+        }
+
+        if (string.IsNullOrWhiteSpace(currency))
+        {
+            errors.Add(Error.Validation(
+                code: "Order.Currency.Invalid",
+                description: "The currency cannot be empty."));
+        }
+
+        var orderItemsList = orderItems.ToList();
+        if (!orderItemsList.Any())
+        {
+            errors.Add(Error.Validation(
+                code: "Order.Items.Empty",
+                description: "Order must have at least one item."));
+        }
+
+        if (errors.Count > 0)
+        {
+            return errors;
+        }
+
+        // Calculate total amount from items
+        var totalAmount = orderItemsList.Sum(item => item.SubTotal.Value);
+        var priceResult = Price.Create(totalAmount);
+        if (priceResult.IsError)
+        {
+            return priceResult.Errors;
+        }
+
+        var order = new Order(
+            id ?? OrderId.CreateUnique(),
+            customerId,
+            priceResult.Value,
+            orderDate,
+            status,
+            currency);
+
+        // Add all items
+        foreach (var item in orderItemsList)
+        {
+            order._orderItems.Add(item);
+        }
+
+        return order;
+    }
 }
 

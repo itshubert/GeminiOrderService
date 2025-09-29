@@ -10,4 +10,6 @@ public interface IOrderRepository
         int pageSize,
         Expression<Func<Order, bool>>? filter = null,
         CancellationToken cancellationToken = default);
+
+    Task<Order> CreateOrderAsync(Order order, CancellationToken cancellationToken = default);
 }

@@ -1,3 +1,27 @@
 @HostAddress=https://localhost:4003
 
 GET {{HostAddress}}/orders?pageNumber=2&pageSize=5
+
+###
+
+POST {{HostAddress}}/orders
+Content-Type: application/json
+
+{
+  "customerId": "ac2a7b8c-b733-4a3a-850e-039045009288",
+  "currency": "AUD",
+  "Items": [
+    {
+      "productName": "Widget A",
+      "productId": "d07463d9-659c-44a1-ae75-6d6a28eb30df",
+      "quantity": 2,
+      "unitPrice": 50.00
+    },
+    {
+      "productName": "Widget B",
+      "productId": "ef97b47e-5ccb-4162-a125-042a58cb6137",
+      "quantity": 1,
+      "unitPrice": 50.75
+    }
+  ]
+}

@@ -36,4 +36,11 @@ public sealed class OrderRepository : BaseRepository, IOrderRepository
 
         return (totalRecords, orders);
     }
+
+    public async Task<Order> CreateOrderAsync(Order order, CancellationToken cancellationToken = default)
+    {
+        _context.Orders.Add(order);
+        await _context.SaveChangesAsync(cancellationToken);
+        return order;
+    }
 }
