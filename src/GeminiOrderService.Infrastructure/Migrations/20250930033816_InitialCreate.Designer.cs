@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GeminiOrderService.Infrastructure.Migrations
 {
     [DbContext(typeof(GeminiOrderDbContext))]
-    [Migration("20250929065442_InitialCreate")]
+    [Migration("20250930033816_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
