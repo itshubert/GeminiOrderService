@@ -1,8 +1,8 @@
 using System.Net.Http.Json;
 using GeminiOrderService.Application.Common.Models.Products;
-using GeminiOrderService.Infrastructure.Services.Models;
+using GeminiOrderService.Infrastructure.Services.Catalog.Contracts;
 
-namespace GeminiOrderService.Infrastructure.Services.Clients;
+namespace GeminiOrderService.Infrastructure.Services.Catalog;
 
 public sealed class CatalogServiceClient
 {
@@ -26,7 +26,7 @@ public sealed class CatalogServiceClient
 
             response.EnsureSuccessStatusCode();
 
-            var product = await response.Content.ReadFromJsonAsync<ProductSummaryDto>(cancellationToken: cancellationToken);
+            var product = await response.Content.ReadFromJsonAsync<ProductSummaryResponse>(cancellationToken: cancellationToken);
             if (product == null)
             {
                 throw new Exception("Failed to deserialize product data.");

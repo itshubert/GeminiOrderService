@@ -1,8 +1,7 @@
 using GeminiOrderService.Application.Common.Interfaces;
 using GeminiOrderService.Application.Common.Models.Products;
-using GeminiOrderService.Infrastructure.Services.Clients;
 
-namespace GeminiOrderService.Infrastructure.Services;
+namespace GeminiOrderService.Infrastructure.Services.Catalog;
 
 public sealed class CatalogService(
     CatalogServiceClient catalogServiceClient) : ICatalogService
