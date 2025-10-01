@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GeminiOrderService.Api.Controllers;
 
 [Route("[controller]")]
-public sealed class OrdersController : ApiController
+public sealed class OrdersController : BaseController
 {
 
     public OrdersController(ISender mediator, IMapper mapper) : base(mediator, mapper)
@@ -42,6 +42,8 @@ public sealed class OrdersController : ApiController
         [FromBody] CreateOrderRequest request,
         CancellationToken cancellationToken = default)
     {
+        var userId = GetUserId(); // You can use this if needed for audit trails, etc.
+
         var command = new CreateOrderCommand(
             request.CustomerId,
             request.Currency,
@@ -55,7 +57,7 @@ public sealed class OrdersController : ApiController
 
         return result.Match(
             order => CreatedAtAction(nameof(GetOrders), new { id = order.Id }, order),
-            errors => Problem(errors));
+            Problem);
     }
 
 }

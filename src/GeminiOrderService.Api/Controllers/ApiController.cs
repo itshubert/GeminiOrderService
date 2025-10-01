@@ -10,13 +10,10 @@ namespace GeminiOrderService.Api.Controllers;
 [ApiController]
 public abstract class ApiController : ControllerBase
 {
-    protected readonly ISender Mediator;
-    protected readonly IMapper Mapper;
+
 
     public ApiController(ISender mediator, IMapper mapper)
     {
-        Mediator = mediator;
-        Mapper = mapper;
     }
 
     protected IActionResult Problem(List<Error> errors)

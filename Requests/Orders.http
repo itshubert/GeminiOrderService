@@ -1,6 +1,11 @@
 @HostAddress=https://localhost:4003
+@AccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMWI1NTBlMC01MjE0LTQ2M2ItODFlZC02MGYyYWIwMGE3MTgiLCJnaXZlbl9uYW1lIjoiSHViZXJ0IiwiZmFtaWx5X25hbWUiOiJEdW1hcyIsImp0aSI6IjZhNDIyMzI0LTcxNjQtNDQwZS1iMDU4LWRkNzNmMDA2MjYyZSIsImV4cCI6MTc1OTIxNzUzOSwiaXNzIjoiaHR0cHM6Ly9nZW1pbmlvcHMuY29tLmF1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwIn0.1kwEnDy7NRle6QE4g7QiJ6jGKjnVEIq9YmNkLeKegC8
 
 GET {{HostAddress}}/orders?pageNumber=2&pageSize=5
+
+###
+GET {{HostAddress}}/orders?pageNumber=2&pageSize=5
+Authorization: Bearer {{AccessToken}}
 
 ###
 
