@@ -1,3 +1,4 @@
+using GeminiOrderService.Application.Common.Interfaces;
 using GeminiOrderService.Application.Orders.Commands;
 using GeminiOrderService.Application.Orders.Queries;
 using GeminiOrderService.Contracts;
@@ -11,9 +12,14 @@ namespace GeminiOrderService.Api.Controllers;
 [Route("[controller]")]
 public sealed class OrdersController : BaseController
 {
+    private readonly ICustomerService _customerService;
 
-    public OrdersController(ISender mediator, IMapper mapper) : base(mediator, mapper)
+    public OrdersController(
+        ISender mediator,
+        IMapper mapper,
+        ICustomerService customerService) : base(mediator, mapper)
     {
+        _customerService = customerService;
     }
 
     [HttpGet]
@@ -42,11 +48,26 @@ public sealed class OrdersController : BaseController
         [FromBody] CreateOrderRequest request,
         CancellationToken cancellationToken = default)
     {
-        var userId = GetUserId(); // You can use this if needed for audit trails, etc.
+        Guid customerId;
+
+        if (!IsUserAuthenticated() || request.CustomerId is null)
+        {
+            // create customer record
+            customerId = await _customerService.CreateCustomerAsync(
+                request.FirstName,
+                request.LastName,
+                request.Email,
+                cancellationToken);
+        }
+        else
+        {
+            customerId = request.CustomerId.Value;
+        }
 
         var command = new CreateOrderCommand(
-            request.CustomerId,
+            customerId,
             request.Currency,
+            Mapper.Map<ShippingAddressCommand>(request.ShippingAddress),
             request.Items.Select(i => new CreateOrderItemCommand(
                 i.ProductId,
                 i.Quantity,

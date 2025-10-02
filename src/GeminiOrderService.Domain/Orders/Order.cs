@@ -14,6 +14,7 @@ public sealed class Order : AggregateRoot<OrderId>
     public DateTimeOffset OrderDate { get; private set; }
     public string Status { get; private set; }
     public string Currency { get; private set; }
+    public ShippingAddress ShippingAddress { get; private set; }
 
     public IReadOnlyList<OrderItem> Items => _orderItems.AsReadOnly();
 
@@ -23,13 +24,15 @@ public sealed class Order : AggregateRoot<OrderId>
         Price totalAmount,
         DateTimeOffset orderDate,
         string status,
-        string currency) : base(id)
+        string currency,
+        ShippingAddress shippingAddress) : base(id)
     {
         CustomerId = customerId;
         TotalAmount = totalAmount;
         OrderDate = orderDate;
         Status = status;
         Currency = currency;
+        ShippingAddress = shippingAddress;
     }
 
     // Parameterless constructor for EF Core
@@ -43,7 +46,8 @@ public sealed class Order : AggregateRoot<OrderId>
         decimal totalAmount,
         DateTimeOffset orderDate,
         string status,
-        string currency)
+        string currency,
+        ShippingAddress shippingAddress)
     {
         List<Error> errors = new();
 
@@ -78,7 +82,8 @@ public sealed class Order : AggregateRoot<OrderId>
             priceOrError.Value,
             orderDate,
             status,
-            currency);
+            currency,
+            shippingAddress);
     }
 
     public void AddItem(OrderItem orderItem)
@@ -97,6 +102,7 @@ public sealed class Order : AggregateRoot<OrderId>
         DateTimeOffset orderDate,
         string status,
         string currency,
+        ShippingAddress shippingAddress,
         IEnumerable<OrderItem> orderItems)
     {
         List<Error> errors = new();
@@ -142,7 +148,8 @@ public sealed class Order : AggregateRoot<OrderId>
             priceResult.Value,
             orderDate,
             status,
-            currency);
+            currency,
+            shippingAddress);
 
         // Add all items
         foreach (var item in orderItemsList)

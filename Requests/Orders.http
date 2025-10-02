@@ -1,5 +1,5 @@
 @HostAddress=https://localhost:4003
-@AccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjMWI1NTBlMC01MjE0LTQ2M2ItODFlZC02MGYyYWIwMGE3MTgiLCJnaXZlbl9uYW1lIjoiSHViZXJ0IiwiZmFtaWx5X25hbWUiOiJEdW1hcyIsImp0aSI6IjZhNDIyMzI0LTcxNjQtNDQwZS1iMDU4LWRkNzNmMDA2MjYyZSIsImV4cCI6MTc1OTIxNzUzOSwiaXNzIjoiaHR0cHM6Ly9nZW1pbmlvcHMuY29tLmF1IiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDozMDAwIn0.1kwEnDy7NRle6QE4g7QiJ6jGKjnVEIq9YmNkLeKegC8
+@AccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YTJkYWEzOC1jMDdiLTQ3NWYtYmQxZi04YzlkZDgwMTEwZGEiLCJnaXZlbl9uYW1lIjoiSHViZXJ0IiwiZmFtaWx5X25hbWUiOiJEdW1hcyIsImp0aSI6Ijk4ZjViZGM0LTkyNjEtNDA0MS1iOTBmLTBhOWQ5MjlmNWUwMSIsImN1c3RvbWVyX2lkIjoiMjI0OTI2MmItNjY0MS00YTI4LWI1NzgtMzc0NzAxMDY2Mjc0IiwiZXhwIjoxNzU5MzcyNDMwLCJpc3MiOiJodHRwczovL2dlbWluaW9wcy5jb20uYXUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAifQ.9PIaeLjzkPeN8VfkKWSrK4lXgBw0D68yqYlo1AzBY9M
 
 GET {{HostAddress}}/orders?pageNumber=2&pageSize=5
 
@@ -14,7 +14,52 @@ Content-Type: application/json
 
 {
   "customerId": "ac2a7b8c-b733-4a3a-850e-039045009288",
+  "firstName": "John",
+  "lastName": "Citizen",
+  "email": "john.citizen@example.com",
   "currency": "AUD",
+  "shippingAddress": {
+    "addressLine1": "123 Main St",
+    "addressLine2": "Apt 4B",
+    "city": "Sydney",
+    "state": "NSW",
+    "postCode": "2000",
+    "country": "Australia"
+  },
+  "Items": [
+    {
+      "productId": "00d5d543-71a1-4149-ae8b-6695a38d448c",
+      "quantity": 2,
+      "unitPrice": 89.99
+    },
+    {
+      "productId": "1a308cf3-2bea-45cd-9575-c396db342ad3",
+      "quantity": 1,
+      "unitPrice": 149.99
+    }
+  ]
+}
+
+###
+
+POST {{HostAddress}}/orders
+Authorization: Bearer {{AccessToken}}
+Content-Type: application/json
+
+{
+  "customerId": "2249262b-6641-4a28-b578-374701066274",
+  "firstName": "John",
+  "lastName": "Citizen",
+  "email": "john.citizen@example.com",
+  "currency": "AUD",
+  "shippingAddress": {
+    "addressLine1": "123 Main St",
+    "addressLine2": "Apt 4B",
+    "city": "Sydney",
+    "state": "NSW",
+    "postCode": "2000",
+    "country": "Australia"
+  },
   "Items": [
     {
       "productId": "00d5d543-71a1-4149-ae8b-6695a38d448c",

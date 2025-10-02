@@ -94,7 +94,7 @@ public sealed class OrderItem : Entity<OrderItemId>
 
         var orderItem = new OrderItem(
             id: OrderItemId.CreateUnique(),
-            orderId: orderId, // Safe because we validated above
+            orderId: orderId!, // Safe because we validated above
             productId: productId,
             quantity: quantity,
             unitPrice: Price.Create(unitPrice).Value,

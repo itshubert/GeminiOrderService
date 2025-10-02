@@ -42,6 +42,39 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
                 ta => ta.Value,
                 value => Price.Create(value).Value);
 
+        // Configure ShippingAddress as an owned entity type (columns in Orders table)
+        builder.OwnsOne(o => o.ShippingAddress, sa =>
+        {
+            sa.Property(a => a.AddressLine1)
+                .IsRequired()
+                .HasMaxLength(200)
+                .HasColumnName("AddressLine1");
+
+            sa.Property(a => a.AddressLine2)
+                .HasMaxLength(200)
+                .HasColumnName("AddressLine2");
+
+            sa.Property(a => a.City)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasColumnName("City");
+
+            sa.Property(a => a.State)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasColumnName("State");
+
+            sa.Property(a => a.PostCode)
+                .IsRequired()
+                .HasMaxLength(20)
+                .HasColumnName("PostCode");
+
+            sa.Property(a => a.Country)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasColumnName("Country");
+        });
+
         // Configure the one-to-many relationship with OrderItems
         builder.HasMany(o => o.Items)
             .WithOne()

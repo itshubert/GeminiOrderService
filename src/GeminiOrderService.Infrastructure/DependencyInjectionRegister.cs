@@ -4,6 +4,7 @@ using GeminiOrderService.Infrastructure.Models;
 using GeminiOrderService.Infrastructure.Persistence;
 using GeminiOrderService.Infrastructure.Persistence.Repositories;
 using GeminiOrderService.Infrastructure.Services.Catalog;
+using GeminiOrderService.Infrastructure.Services.Customer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,7 @@ public static class DependencyInjectionRegister
         services.AddScoped<PublishDomainEventsInterceptor>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<ICatalogService, CatalogService>();
+        services.AddScoped<ICustomerService, CustomerService>();
 
         return services;
     }
@@ -48,6 +50,11 @@ public static class DependencyInjectionRegister
         SetupHttpClient<CatalogServiceClient>(
             services,
             servicesSettings.CatalogServiceBaseUrl,
+            jitterer);
+
+        SetupHttpClient<CustomerServiceClient>(
+            services,
+            servicesSettings.CustomerServiceBaseUrl,
             jitterer);
 
         return services;

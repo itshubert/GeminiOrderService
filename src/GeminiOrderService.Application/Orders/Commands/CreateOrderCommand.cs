@@ -5,6 +5,7 @@ using GeminiOrderService.Application.Common.Models.Products;
 using GeminiOrderService.Domain.Common.Errors;
 using GeminiOrderService.Domain.Orders;
 using GeminiOrderService.Domain.Orders.Entities;
+using GeminiOrderService.Domain.Orders.ValueObjects;
 using MapsterMapper;
 using MediatR;
 
@@ -13,7 +14,16 @@ namespace GeminiOrderService.Application.Orders.Commands;
 public sealed record CreateOrderCommand(
     Guid CustomerId,
     string Currency,
+    ShippingAddressCommand ShippingAddress,
     IEnumerable<CreateOrderItemCommand> Items) : IRequest<ErrorOr<OrderModel>>;
+
+public sealed record ShippingAddressCommand(
+    string AddressLine1,
+    string? AddressLine2,
+    string City,
+    string State,
+    string PostCode,
+    string Country);
 
 public sealed record CreateOrderItemCommand(
     Guid ProductId,
@@ -60,6 +70,15 @@ public sealed class CreateOrderCommandHandler(
             return allErrors;
         }
 
+        // Create shipping address value object
+        var shippingAddress = ShippingAddress.Create(
+            request.ShippingAddress.AddressLine1,
+            request.ShippingAddress.AddressLine2,
+            request.ShippingAddress.City,
+            request.ShippingAddress.State,
+            request.ShippingAddress.PostCode,
+            request.ShippingAddress.Country);
+
         // Create the order first
         var orderResult = Order.Create(
             id: null, // Will generate unique ID
@@ -67,7 +86,8 @@ public sealed class CreateOrderCommandHandler(
             totalAmount,
             DateTimeOffset.UtcNow,
             "Pending", // Default status
-            request.Currency);
+            request.Currency,
+            shippingAddress);
 
         if (orderResult.IsError)
         {
