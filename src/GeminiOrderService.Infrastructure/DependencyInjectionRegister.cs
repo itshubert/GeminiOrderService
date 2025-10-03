@@ -9,8 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Polly;
-using Polly.Timeout;
+using Amazon.EventBridge;
+using GeminiOrderService.Application.Common.Messaging;
+using GeminiOrderService.Infrastructure.Messaging;
 
 namespace GeminiOrderService.Infrastructure;
 
@@ -25,6 +26,8 @@ public static class DependencyInjectionRegister
         });
 
         services.AddGeminiServices(configuration);
+        ConfigureEventBridge(services, configuration);
+        services.AddScoped<IEventBridgePublisher, EventBridgePublisher>();
 
         services.AddScoped<PublishDomainEventsInterceptor>();
         services.AddScoped<IOrderRepository, OrderRepository>();
@@ -75,15 +78,63 @@ public static class DependencyInjectionRegister
             client.BaseAddress = new Uri(baseUrl);
             client.Timeout = TimeSpan.FromSeconds(30);
         })
-        .AddTransientHttpErrorPolicy(policy =>
-            policy.Or<TimeoutRejectedException>()
-        .WaitAndRetryAsync(4, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) + TimeSpan.FromMilliseconds(jitterer.Next(0, 1000)),
-        onRetry: (outcome, timespan, retryAttempt, context) =>
+        .AddStandardResilienceHandler(options =>
         {
-            var serviceProvider = services.BuildServiceProvider();
-            var logger = serviceProvider.GetRequiredService<ILoggerFactory>().CreateLogger(nameof(T));
-            logger.LogWarning($"{nameof(T)} RETRY {retryAttempt} AFTER {timespan.TotalSeconds} seconds");
-        }))
-        .AddPolicyHandler(Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(3)));
+            // Configure retry with exponential backoff and jitter
+            options.Retry.MaxRetryAttempts = 4;
+            options.Retry.BackoffType = Polly.DelayBackoffType.Exponential;
+            options.Retry.UseJitter = true;
+            options.Retry.Delay = TimeSpan.FromSeconds(2);
+
+            // Configure circuit breaker
+            options.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(30);
+            options.CircuitBreaker.FailureRatio = 0.5;
+            options.CircuitBreaker.MinimumThroughput = 5;
+
+            // Configure timeout
+            options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(3);
+            options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(30);
+        });
+    }
+
+    private static void ConfigureEventBridge(IServiceCollection services, IConfiguration configuration)
+    {
+        var useLocalStack = configuration.GetValue<bool>("AWS:UseLocalStack");
+
+        if (useLocalStack)
+        {
+            // Configure for LocalStack
+            var serviceUrl = configuration["AWS:LocalStack:ServiceUrl"] ?? "http://localhost:4566";
+
+            services.AddAWSService<IAmazonEventBridge>(new Amazon.Extensions.NETCore.Setup.AWSOptions
+            {
+                DefaultClientConfig =
+                {
+                    ServiceURL = serviceUrl
+                }
+            });
+
+            // Log LocalStack configuration
+            services.AddSingleton(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<IAmazonEventBridge>>();
+                logger.LogInformation("EventBridge configured for LocalStack at {ServiceUrl}", serviceUrl);
+                return sp;
+            });
+        }
+        else
+        {
+            // Configure for AWS
+            services.AddAWSService<IAmazonEventBridge>();
+
+            // Log AWS configuration
+            services.AddSingleton(sp =>
+            {
+                var logger = sp.GetRequiredService<ILogger<IAmazonEventBridge>>();
+                var region = configuration["AWS:Region"] ?? "us-east-1";
+                logger.LogInformation("EventBridge configured for AWS in region {Region}", region);
+                return sp;
+            });
+        }
     }
 }

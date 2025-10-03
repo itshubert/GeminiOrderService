@@ -5,6 +5,7 @@ using GeminiOrderService.Application.Common.Models.Products;
 using GeminiOrderService.Domain.Common.Errors;
 using GeminiOrderService.Domain.Orders;
 using GeminiOrderService.Domain.Orders.Entities;
+using GeminiOrderService.Domain.Orders.Events;
 using GeminiOrderService.Domain.Orders.ValueObjects;
 using MapsterMapper;
 using MediatR;
@@ -116,6 +117,8 @@ public sealed class CreateOrderCommandHandler(
 
             order.AddItem(orderItemResult.Value);
         }
+
+        order.AddDomainEvent(new OrderSubmitted(order, order.Items.ToList()));
 
         // Save to repository
         await orderRepository.CreateOrderAsync(order, cancellationToken);

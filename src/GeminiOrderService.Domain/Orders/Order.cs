@@ -1,6 +1,7 @@
 using ErrorOr;
 using GeminiOrderService.Domain.Common.Models;
 using GeminiOrderService.Domain.Orders.Entities;
+using GeminiOrderService.Domain.Orders.Events;
 using GeminiOrderService.Domain.Orders.ValueObjects;
 
 namespace GeminiOrderService.Domain.Orders;
@@ -156,6 +157,8 @@ public sealed class Order : AggregateRoot<OrderId>
         {
             order._orderItems.Add(item);
         }
+
+        order.AddDomainEvent(new OrderSubmitted(order, orderItemsList));
 
         return order;
     }
