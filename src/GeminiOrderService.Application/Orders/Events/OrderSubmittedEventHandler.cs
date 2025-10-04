@@ -1,5 +1,7 @@
 using GeminiOrderService.Application.Common.Messaging;
+using GeminiOrderService.Application.Common.Models.Orders;
 using GeminiOrderService.Domain.Orders.Events;
+using MapsterMapper;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -9,30 +11,21 @@ public sealed record OrderSubmittedEventHandler : INotificationHandler<OrderSubm
 {
     private readonly IEventBridgePublisher _eventBridgePublisher;
     private readonly ILogger<OrderSubmittedEventHandler> _logger;
+    private readonly IMapper _mapper;
 
     public OrderSubmittedEventHandler(
         IEventBridgePublisher eventBridgePublisher,
-        ILogger<OrderSubmittedEventHandler> logger)
+        ILogger<OrderSubmittedEventHandler> logger,
+        IMapper mapper)
     {
         _eventBridgePublisher = eventBridgePublisher;
         _logger = logger;
+        _mapper = mapper;
     }
 
     public async Task Handle(OrderSubmitted notification, CancellationToken cancellationToken)
     {
-        var order = new
-        {
-            OrderId = notification.Order.Id,
-            notification.Order.CustomerId,
-            notification.Order.OrderDate,
-            notification.Order.TotalAmount,
-            Items = notification.OrderItems.Select(item => new
-            {
-                item.ProductId,
-                item.Quantity,
-                item.UnitPrice
-            })
-        };
+        var order = _mapper.Map<OrderModel>(notification.Order);
 
         await _eventBridgePublisher.PublishAsync("OrderSubmitted", order, cancellationToken);
     }
