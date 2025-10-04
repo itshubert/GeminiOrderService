@@ -75,7 +75,7 @@ public sealed class EventBridgePublisher : IEventBridgePublisher
                     return ValueTask.CompletedTask;
                 }
             })
-            .AddTimeout(TimeSpan.FromSeconds(10))
+            .AddTimeout(TimeSpan.FromSeconds(30))
             .Build();
     }
 
@@ -140,6 +140,13 @@ public sealed class EventBridgePublisher : IEventBridgePublisher
         {
             _logger.LogError(ex,
                 "Timeout publishing event to EventBridge. DetailType: {DetailType}",
+                detailType);
+            throw;
+        }
+        catch (TaskCanceledException ex) when (ex.CancellationToken.IsCancellationRequested)
+        {
+            _logger.LogError(ex,
+                "EventBridge publish operation was canceled. DetailType: {DetailType}",
                 detailType);
             throw;
         }
