@@ -27,7 +27,7 @@ public static class OrderRepositoryUsageExamples
     /// </summary>
     public static async Task<(int TotalRecords, IEnumerable<Order> Orders)> GetOrdersByStatus(
         OrderRepository repository,
-        string status,
+        OrderStatus status,
         int pageNumber = 1,
         int pageSize = 10)
     {
@@ -105,7 +105,7 @@ public static class OrderRepositoryUsageExamples
     /// </summary>
     public static async Task<(int TotalRecords, IEnumerable<Order> Orders)> GetOrdersWithMultipleStatuses(
         OrderRepository repository,
-        List<string> statuses,
+        List<OrderStatus> statuses,
         int pageNumber = 1,
         int pageSize = 10)
     {
@@ -141,7 +141,7 @@ public static class OrderRepositoryUsageExamples
         Expression<Func<Order, bool>> filter = order =>
             order.OrderDate >= thirtyDaysAgo &&
             order.TotalAmount.Value >= 1000m &&
-            order.Status == "Completed";
+            order.Status == OrderStatus.Delivered;
 
         return await repository.GetOrdersAsync(pageNumber, pageSize, filter);
     }

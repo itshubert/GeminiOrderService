@@ -3,13 +3,15 @@ using GeminiOrderService.Domain.Orders;
 
 namespace GeminiOrderService.Application.Common.Interfaces;
 
-public interface IOrderRepository
+public interface IOrderRepository : IRepository
 {
     Task<(int TotalRecords, IEnumerable<Order> Orders)> GetOrdersAsync(
         int pageNumber,
         int pageSize,
         Expression<Func<Order, bool>>? filter = null,
         CancellationToken cancellationToken = default);
+
+    Task<Order?> GetOrderForUpdateAsync(Guid orderId, CancellationToken cancellationToken = default);
 
     Task<Order> CreateOrderAsync(Order order, CancellationToken cancellationToken = default);
 }

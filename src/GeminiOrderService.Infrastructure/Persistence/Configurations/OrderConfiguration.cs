@@ -29,7 +29,13 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.Property(o => o.Status)
             .IsRequired()
+            .HasConversion<string>()
             .HasMaxLength(50);
+
+        // Add CHECK constraint to ensure only valid OrderStatus values
+        builder.ToTable(t => t.HasCheckConstraint(
+            "CK_Orders_Status",
+            "\"Status\" IN ('Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled')"));
 
         builder.Property(o => o.Currency)
             .IsRequired()

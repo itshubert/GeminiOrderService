@@ -86,7 +86,7 @@ public sealed class CreateOrderCommandHandler(
             request.CustomerId,
             totalAmount,
             DateTimeOffset.UtcNow,
-            "Pending", // Default status
+            OrderStatus.Pending, // Default status
             request.Currency,
             shippingAddress);
 

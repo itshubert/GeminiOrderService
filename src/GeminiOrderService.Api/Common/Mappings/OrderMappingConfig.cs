@@ -13,6 +13,7 @@ public class OrderMappingConfig : IRegister
             .Map(dest => dest, src => src);
 
         config.NewConfig<OrderModel, OrderResponse>()
+            .Map(dest => dest.Status, src => src.Status.ToString())
             .Map(dest => dest.Items, src => src.Items.Select(item => item.Adapt<OrderItemResponse>()))
             .Map(dest => dest, src => src);
     }

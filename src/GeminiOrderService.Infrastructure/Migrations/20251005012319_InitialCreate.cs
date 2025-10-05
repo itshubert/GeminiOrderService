@@ -20,11 +20,18 @@ namespace GeminiOrderService.Infrastructure.Migrations
                     TotalAmount = table.Column<decimal>(type: "numeric", nullable: false),
                     OrderDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false)
+                    Currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
+                    AddressLine1 = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    AddressLine2 = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    City = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    State = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    PostCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Country = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.CheckConstraint("CK_Orders_Status", "\"Status\" IN ('Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled')");
                 });
 
             migrationBuilder.CreateTable(

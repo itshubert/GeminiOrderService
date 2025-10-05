@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using GeminiOrderService.Application.Common.Interfaces;
 using GeminiOrderService.Domain.Orders;
+using GeminiOrderService.Domain.Orders.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace GeminiOrderService.Infrastructure.Persistence.Repositories;
@@ -35,6 +36,16 @@ public sealed class OrderRepository : BaseRepository, IOrderRepository
             .ToListAsync(cancellationToken);
 
         return (totalRecords, orders);
+    }
+
+    public async Task<Order?> GetOrderForUpdateAsync(Guid orderId, CancellationToken cancellationToken = default)
+    {
+        var orderIdValue = OrderId.Create(orderId);
+        var order = await _context.Orders
+        .Include(o => o.Items)
+        .FirstOrDefaultAsync(o => o.Id == orderIdValue, cancellationToken);
+
+        return order;
     }
 
     public async Task<Order> CreateOrderAsync(Order order, CancellationToken cancellationToken = default)

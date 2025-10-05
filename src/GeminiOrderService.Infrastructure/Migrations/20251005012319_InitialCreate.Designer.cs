@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GeminiOrderService.Infrastructure.Migrations
 {
     [DbContext(typeof(GeminiOrderDbContext))]
-    [Migration("20251001225229_AddShippingAddressToOrder")]
-    partial class AddShippingAddressToOrder
+    [Migration("20251005012319_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,7 +83,10 @@ namespace GeminiOrderService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Orders_Status", "\"Status\" IN ('Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled')");
+                        });
                 });
 
             modelBuilder.Entity("GeminiOrderService.Domain.Orders.Entities.OrderItem", b =>
@@ -106,37 +109,37 @@ namespace GeminiOrderService.Infrastructure.Migrations
                                 .IsRequired()
                                 .HasMaxLength(200)
                                 .HasColumnType("character varying(200)")
-                                .HasColumnName("ShippingAddressLine1");
+                                .HasColumnName("AddressLine1");
 
                             b1.Property<string>("AddressLine2")
                                 .IsRequired()
                                 .HasMaxLength(200)
                                 .HasColumnType("character varying(200)")
-                                .HasColumnName("ShippingAddressLine2");
+                                .HasColumnName("AddressLine2");
 
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
-                                .HasColumnName("ShippingCity");
+                                .HasColumnName("City");
 
                             b1.Property<string>("Country")
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
-                                .HasColumnName("ShippingCountry");
+                                .HasColumnName("Country");
 
                             b1.Property<string>("PostCode")
                                 .IsRequired()
                                 .HasMaxLength(20)
                                 .HasColumnType("character varying(20)")
-                                .HasColumnName("ShippingPostCode");
+                                .HasColumnName("PostCode");
 
                             b1.Property<string>("State")
                                 .IsRequired()
                                 .HasMaxLength(100)
                                 .HasColumnType("character varying(100)")
-                                .HasColumnName("ShippingState");
+                                .HasColumnName("State");
 
                             b1.HasKey("OrderId");
 

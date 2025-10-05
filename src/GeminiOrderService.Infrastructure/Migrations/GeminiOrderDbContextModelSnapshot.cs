@@ -80,7 +80,10 @@ namespace GeminiOrderService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Orders_Status", "\"Status\" IN ('Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled')");
+                        });
                 });
 
             modelBuilder.Entity("GeminiOrderService.Domain.Orders.Entities.OrderItem", b =>

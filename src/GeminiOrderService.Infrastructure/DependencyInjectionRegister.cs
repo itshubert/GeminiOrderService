@@ -1,4 +1,5 @@
 using GeminiOrderService.Application.Common.Interfaces;
+using GeminiOrderService.Domain.Orders;
 using GeminiOrderService.Infrastructure.Interceptors;
 using GeminiOrderService.Infrastructure.Models;
 using GeminiOrderService.Infrastructure.Persistence;
@@ -12,7 +13,14 @@ using Microsoft.Extensions.Logging;
 using Amazon.EventBridge;
 using GeminiOrderService.Application.Common.Messaging;
 using GeminiOrderService.Infrastructure.Messaging;
-
+using Amazon.SQS;
+using Amazon.Runtime.CredentialManagement;
+using Amazon;
+using GeminiOrderService.Infrastructure.Messaging.Events;
+using GeminiOrderService.Infrastructure.Messaging.EventProcessors;
+using Microsoft.Extensions.Options;
+using Npgsql;
+using Npgsql.NameTranslation;
 namespace GeminiOrderService.Infrastructure;
 
 public static class DependencyInjectionRegister
@@ -25,9 +33,40 @@ public static class DependencyInjectionRegister
             options.UseNpgsql(connectionString);
         });
 
+        services.AddSingleton<IAmazonSQS>(sp =>
+        {
+            var useLocalStack = configuration.GetValue<bool>("AWS:UseLocalStack");
+
+            if (useLocalStack)
+            {
+                var serviceUrl = configuration["AWS:LocalStack:ServiceUrl"] ?? "http://localhost:4566";
+                var config = new AmazonSQSConfig { ServiceURL = serviceUrl };
+                return new AmazonSQSClient(config);
+            }
+
+            var profileName = Environment.GetEnvironmentVariable("AWS_PROFILE");
+            if (!string.IsNullOrEmpty(profileName))
+            {
+                var credentialProfileStoreChain = new CredentialProfileStoreChain();
+                if (credentialProfileStoreChain.TryGetProfile(profileName, out var profile))
+                {
+                    var credentials = profile.GetAWSCredentials(credentialProfileStoreChain);
+                    return new AmazonSQSClient(credentials, RegionEndpoint.GetBySystemName("ap-southeast-2"));
+                }
+            }
+
+            return new AmazonSQSClient(RegionEndpoint.GetBySystemName("ap-southeast-2"));
+        });
+
         services.AddGeminiServices(configuration);
         ConfigureEventBridge(services, configuration);
         services.AddScoped<IEventBridgePublisher, EventBridgePublisher>();
+
+        services.Configure<QueueSettings>(configuration.GetSection("QueueSettings"));
+        services.AddMessaging<InventoryReservedEvent, InventoryReservedEventProcessor>(sp =>
+        {
+            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.InventoryReserved ?? string.Empty;
+        });
 
         services.AddScoped<PublishDomainEventsInterceptor>();
         services.AddScoped<IOrderRepository, OrderRepository>();
@@ -136,5 +175,33 @@ public static class DependencyInjectionRegister
                 return sp;
             });
         }
+    }
+
+    public static IServiceCollection AddMessaging<TEvent, TProcessor>(
+        this IServiceCollection services,
+        Func<IServiceProvider, string> queueUrlFactory)
+            where TProcessor : class, IEventProcessor<TEvent>
+    {
+
+
+        services.AddScoped<IEventProcessor<TEvent>, TProcessor>();
+
+        services.AddHostedService(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<SqsConsumerBackgroundService<TEvent, TProcessor>>>();
+            var serviceScopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
+            var sqs = sp.GetRequiredService<IAmazonSQS>();
+            var queueUrl = queueUrlFactory(sp);
+
+            logger.LogInformation("Starting SQS consumer for queue: {QueueUrl}", queueUrl);
+
+            return new SqsConsumerBackgroundService<TEvent, TProcessor>(
+                logger,
+                serviceScopeFactory,
+                sqs,
+                queueUrl);
+        });
+
+        return services;
     }
 }

@@ -13,7 +13,7 @@ public sealed class Order : AggregateRoot<OrderId>
     public Guid CustomerId { get; private set; }
     public Price TotalAmount { get; private set; }
     public DateTimeOffset OrderDate { get; private set; }
-    public string Status { get; private set; }
+    public OrderStatus Status { get; private set; }
     public string Currency { get; private set; }
     public ShippingAddress ShippingAddress { get; private set; }
 
@@ -24,7 +24,7 @@ public sealed class Order : AggregateRoot<OrderId>
         Guid customerId,
         Price totalAmount,
         DateTimeOffset orderDate,
-        string status,
+        OrderStatus status,
         string currency,
         ShippingAddress shippingAddress) : base(id)
     {
@@ -46,7 +46,7 @@ public sealed class Order : AggregateRoot<OrderId>
         Guid customerId,
         decimal totalAmount,
         DateTimeOffset orderDate,
-        string status,
+        OrderStatus status,
         string currency,
         ShippingAddress shippingAddress)
     {
@@ -56,13 +56,6 @@ public sealed class Order : AggregateRoot<OrderId>
         if (priceOrError.IsError)
         {
             errors.AddRange(priceOrError.Errors);
-        }
-
-        if (string.IsNullOrWhiteSpace(status))
-        {
-            errors.Add(Error.Validation(
-                code: "Order.Status.Invalid",
-                description: "The order status cannot be empty."));
         }
 
         if (string.IsNullOrWhiteSpace(currency))
@@ -101,19 +94,12 @@ public sealed class Order : AggregateRoot<OrderId>
         OrderId? id,
         Guid customerId,
         DateTimeOffset orderDate,
-        string status,
+        OrderStatus status,
         string currency,
         ShippingAddress shippingAddress,
         IEnumerable<OrderItem> orderItems)
     {
         List<Error> errors = new();
-
-        if (string.IsNullOrWhiteSpace(status))
-        {
-            errors.Add(Error.Validation(
-                code: "Order.Status.Invalid",
-                description: "The order status cannot be empty."));
-        }
 
         if (string.IsNullOrWhiteSpace(currency))
         {
@@ -161,6 +147,15 @@ public sealed class Order : AggregateRoot<OrderId>
         order.AddDomainEvent(new OrderSubmitted(order, orderItemsList));
 
         return order;
+    }
+
+    public void UpdateStatus(OrderStatus newStatus)
+    {
+        if (Status != newStatus)
+        {
+            Status = newStatus;
+            // AddDomainEvent(new OrderStatusChanged(this, newStatus));
+        }
     }
 }
 

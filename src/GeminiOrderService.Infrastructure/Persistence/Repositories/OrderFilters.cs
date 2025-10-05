@@ -21,7 +21,7 @@ public static class OrderFilters
     /// </summary>
     /// <param name="status">The status to filter by</param>
     /// <returns>Expression to filter orders by status</returns>
-    public static Expression<Func<Order, bool>> ByStatus(string status)
+    public static Expression<Func<Order, bool>> ByStatus(OrderStatus status)
         => order => order.Status == status;
 
     /// <summary>
