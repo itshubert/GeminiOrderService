@@ -1,4 +1,6 @@
-﻿using GeminiOrderService.Application.Common.Behaviors;
+﻿using System.Reflection;
+using FluentValidation;
+using GeminiOrderService.Application.Common.Behaviors;
 using Mapster;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +13,9 @@ public static class DependencyInjectionRegister
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
         services.AddMappings();
+
+        // Register FluentValidation validators
+        services.AddValidatorsFromAssembly(typeof(DependencyInjectionRegister).Assembly);
 
         services.AddScoped(
             typeof(IPipelineBehavior<,>),
