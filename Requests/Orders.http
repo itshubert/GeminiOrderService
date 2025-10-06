@@ -36,6 +36,11 @@ Content-Type: application/json
       "productId": "1a308cf3-2bea-45cd-9575-c396db342ad3",
       "quantity": 1,
       "unitPrice": 149.99
+    },
+    {
+      "productId": "e2416012-7ad8-431a-9372-24cca3519c2b",
+      "quantity": 100,
+      "unitPrice": 329.99
     }
   ]
 }

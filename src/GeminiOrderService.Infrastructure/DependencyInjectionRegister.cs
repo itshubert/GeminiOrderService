@@ -19,8 +19,6 @@ using Amazon;
 using GeminiOrderService.Infrastructure.Messaging.Events;
 using GeminiOrderService.Infrastructure.Messaging.EventProcessors;
 using Microsoft.Extensions.Options;
-using Npgsql;
-using Npgsql.NameTranslation;
 namespace GeminiOrderService.Infrastructure;
 
 public static class DependencyInjectionRegister
@@ -66,6 +64,10 @@ public static class DependencyInjectionRegister
         services.AddMessaging<InventoryReservedEvent, InventoryReservedEventProcessor>(sp =>
         {
             return sp.GetRequiredService<IOptions<QueueSettings>>().Value.InventoryReserved ?? string.Empty;
+        });
+        services.AddMessaging<OrderStockFailedEvent, OrderStockFailedEventProcessor>(sp =>
+        {
+            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.OrderStockFailed ?? string.Empty;
         });
 
         services.AddScoped<PublishDomainEventsInterceptor>();

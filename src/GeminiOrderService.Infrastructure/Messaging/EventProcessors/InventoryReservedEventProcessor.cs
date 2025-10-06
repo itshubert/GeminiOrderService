@@ -1,4 +1,5 @@
 using GeminiOrderService.Application.Common.Messaging;
+using GeminiOrderService.Application.Common.Models.Orders;
 using GeminiOrderService.Application.Orders.Commands;
 using GeminiOrderService.Infrastructure.Messaging.Events;
 using MediatR;
@@ -21,7 +22,7 @@ public sealed class InventoryReservedEventProcessor : IEventProcessor<InventoryR
     {
         _logger.LogInformation("Processing InventoryReservedEvent: {EventId}", @event.OrderId);
 
-        var result = await _mediator.Send(new UpdateOrderStatusCommand(@event.OrderId), cancellationToken);
+        var result = await _mediator.Send(new UpdateOrderStatusCommand(@event.OrderId, OrderStatus.Confirmed), cancellationToken);
 
         if (result.IsError)
         {

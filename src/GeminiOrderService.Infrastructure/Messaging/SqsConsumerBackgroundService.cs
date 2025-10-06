@@ -97,12 +97,12 @@ public sealed class SqsConsumerBackgroundService<TEvent, TProcessor> : Backgroun
 
                     // Deserialize the EventBridge envelope first, then extract the detail
                     // var envelope = JsonSerializer.Deserialize<EventBridgeEnvelope<TEvent>>(message.Body, jsonOptions);
-                    var order = JsonSerializer.Deserialize<TEvent>(message.Body, jsonOptions);
+                    var obj = JsonSerializer.Deserialize<TEvent>(message.Body, jsonOptions);
 
                     // if (envelope is not null && envelope.Detail is not null)
-                    if (order is not null)
+                    if (obj is not null)
                     {
-                        await processor.ProcessEventAsync(order, stoppingToken);
+                        await processor.ProcessEventAsync(obj, stoppingToken);
 
                         // Delete the message from the queue after successful processing
                         await _sqs.DeleteMessageAsync(_queueUrl, message.ReceiptHandle, stoppingToken);
