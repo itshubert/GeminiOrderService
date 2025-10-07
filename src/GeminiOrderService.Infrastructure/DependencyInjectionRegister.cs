@@ -19,6 +19,7 @@ using Amazon;
 using GeminiOrderService.Infrastructure.Messaging.Events;
 using GeminiOrderService.Infrastructure.Messaging.EventProcessors;
 using Microsoft.Extensions.Options;
+using Amazon.Runtime;
 namespace GeminiOrderService.Infrastructure;
 
 public static class DependencyInjectionRegister
@@ -39,7 +40,7 @@ public static class DependencyInjectionRegister
             {
                 var serviceUrl = configuration["AWS:LocalStack:ServiceUrl"] ?? "http://localhost:4566";
                 var config = new AmazonSQSConfig { ServiceURL = serviceUrl };
-                return new AmazonSQSClient(config);
+                return new AmazonSQSClient(new AnonymousAWSCredentials(), config);
             }
 
             var profileName = Environment.GetEnvironmentVariable("AWS_PROFILE");
@@ -149,6 +150,7 @@ public static class DependencyInjectionRegister
 
             services.AddAWSService<IAmazonEventBridge>(new Amazon.Extensions.NETCore.Setup.AWSOptions
             {
+                Credentials = new AnonymousAWSCredentials(),
                 DefaultClientConfig =
                 {
                     ServiceURL = serviceUrl
@@ -165,14 +167,17 @@ public static class DependencyInjectionRegister
         }
         else
         {
-            // Configure for AWS
-            services.AddAWSService<IAmazonEventBridge>();
+            // Configure for AWS - use environment variables or IAM roles
+            var region = configuration["AWS:Region"] ?? "ap-southeast-2";
+            services.AddAWSService<IAmazonEventBridge>(new Amazon.Extensions.NETCore.Setup.AWSOptions
+            {
+                Region = RegionEndpoint.GetBySystemName(region)
+            });
 
             // Log AWS configuration
             services.AddSingleton(sp =>
             {
                 var logger = sp.GetRequiredService<ILogger<IAmazonEventBridge>>();
-                var region = configuration["AWS:Region"] ?? "us-east-1";
                 logger.LogInformation("EventBridge configured for AWS in region {Region}", region);
                 return sp;
             });
