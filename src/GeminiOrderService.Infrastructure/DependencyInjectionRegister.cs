@@ -1,5 +1,4 @@
 using GeminiOrderService.Application.Common.Interfaces;
-using GeminiOrderService.Domain.Orders;
 using GeminiOrderService.Infrastructure.Interceptors;
 using GeminiOrderService.Infrastructure.Models;
 using GeminiOrderService.Infrastructure.Persistence;
