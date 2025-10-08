@@ -8,7 +8,6 @@ using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.CircuitBreaker;
 using Polly.Retry;
-using Polly.Timeout;
 
 namespace GeminiOrderService.Infrastructure.Messaging;
 
@@ -80,7 +79,7 @@ public sealed class EventBridgePublisher : IEventBridgePublisher
     }
 
     public async Task PublishAsync<T>(
-        string detailType,
+        DetailTypes detailType,
         T eventDetail,
         CancellationToken cancellationToken = default) where T : class
     {
@@ -100,7 +99,7 @@ public sealed class EventBridgePublisher : IEventBridgePublisher
                         new PutEventsRequestEntry
                         {
                             Source = _source,
-                            DetailType = detailType,
+                            DetailType = detailType.ToString(),
                             Detail = eventDetailJson,
                             EventBusName = _eventBusName,
                             Time = DateTime.UtcNow

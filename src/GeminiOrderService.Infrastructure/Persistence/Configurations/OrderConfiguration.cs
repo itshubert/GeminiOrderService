@@ -51,6 +51,14 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
         // Configure ShippingAddress as an owned entity type (columns in Orders table)
         builder.OwnsOne(o => o.ShippingAddress, sa =>
         {
+            sa.Property(a => a.FirstName)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasColumnName("FirstName");
+            sa.Property(a => a.LastName)
+                .IsRequired()
+                .HasMaxLength(100)
+                .HasColumnName("LastName");
             sa.Property(a => a.AddressLine1)
                 .IsRequired()
                 .HasMaxLength(200)

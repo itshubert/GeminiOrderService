@@ -4,6 +4,8 @@ namespace GeminiOrderService.Domain.Orders.ValueObjects;
 
 public sealed class ShippingAddress : ValueObject
 {
+    public string FirstName { get; private set; }
+    public string LastName { get; private set; }
     public string AddressLine1 { get; private set; }
     public string AddressLine2 { get; private set; } = string.Empty;
     public string City { get; private set; }
@@ -12,6 +14,8 @@ public sealed class ShippingAddress : ValueObject
     public string Country { get; private set; }
 
     private ShippingAddress(
+        string firstName,
+        string lastName,
         string addressLine1,
         string addressLine2,
         string city,
@@ -19,6 +23,8 @@ public sealed class ShippingAddress : ValueObject
         string postCode,
         string country)
     {
+        FirstName = firstName;
+        LastName = lastName;
         AddressLine1 = addressLine1;
         AddressLine2 = addressLine2;
         City = city;
@@ -28,6 +34,8 @@ public sealed class ShippingAddress : ValueObject
     }
 
     public static ShippingAddress Create(
+        string firstName,
+        string lastName,
         string addressLine1,
         string? addressLine2,
         string city,
@@ -36,6 +44,8 @@ public sealed class ShippingAddress : ValueObject
         string country)
     {
         return new ShippingAddress(
+            firstName,
+            lastName,
             addressLine1,
             addressLine2 ?? string.Empty,
             city,

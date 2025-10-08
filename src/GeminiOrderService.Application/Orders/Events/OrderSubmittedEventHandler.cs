@@ -1,3 +1,4 @@
+using GeminiOrderService.Application.Common.Mappings;
 using GeminiOrderService.Application.Common.Messaging;
 using GeminiOrderService.Application.Common.Models.Orders;
 using GeminiOrderService.Domain.Orders.Events;
@@ -25,8 +26,8 @@ public sealed record OrderSubmittedEventHandler : INotificationHandler<OrderSubm
 
     public async Task Handle(OrderSubmitted notification, CancellationToken cancellationToken)
     {
-        var order = _mapper.Map<OrderModel>(notification.Order);
+        // var order = _mapper.Map<OrderModel>(notification.Order);
 
-        await _eventBridgePublisher.PublishAsync("OrderSubmitted", order, cancellationToken);
+        await _eventBridgePublisher.PublishAsync(DetailTypes.OrderSubmitted, notification.Order.ToIntegrationModel(), cancellationToken);
     }
 }

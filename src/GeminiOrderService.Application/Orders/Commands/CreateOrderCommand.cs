@@ -19,6 +19,8 @@ public sealed record CreateOrderCommand(
     IEnumerable<CreateOrderItemCommand> Items) : IRequest<ErrorOr<OrderModel>>;
 
 public sealed record ShippingAddressCommand(
+    string FirstName,
+    string LastName,
     string AddressLine1,
     string? AddressLine2,
     string City,
@@ -73,6 +75,8 @@ public sealed class CreateOrderCommandHandler(
 
         // Create shipping address value object
         var shippingAddress = ShippingAddress.Create(
+            request.ShippingAddress.FirstName,
+            request.ShippingAddress.LastName,
             request.ShippingAddress.AddressLine1,
             request.ShippingAddress.AddressLine2,
             request.ShippingAddress.City,

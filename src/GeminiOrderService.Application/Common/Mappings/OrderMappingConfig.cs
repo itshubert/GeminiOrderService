@@ -1,4 +1,6 @@
+using System.Linq;
 using GeminiOrderService.Application.Common.Models.Orders;
+using GeminiOrderService.Application.Common.Models.Ordersl;
 using GeminiOrderService.Domain.Orders;
 using GeminiOrderService.Domain.Orders.Entities;
 using Mapster;
@@ -22,4 +24,26 @@ public class OrderMappingConfig : IRegister
             .Map(dest => dest.Items, src => src.Items.Select(item => item.Adapt<OrderItemModel>()))
             .Map(dest => dest, src => src);
     }
+}
+
+public static class OrderExtensions
+{
+    public static OrderSubmittedIntegrationModel ToIntegrationModel(this Order order) =>
+        new OrderSubmittedIntegrationModel(
+            order.Id.Value,
+            order.CustomerId,
+            order.OrderDate,
+            order.Status.ToString(),
+            order.TotalAmount.Value,
+            order.Currency,
+            order.Items.Select(item => item.Adapt<OrderItemModel>()),
+            new ShippingAddress(
+                order.ShippingAddress.FirstName,
+                order.ShippingAddress.LastName,
+                order.ShippingAddress.AddressLine1,
+                order.ShippingAddress.AddressLine2 ?? string.Empty,
+                order.ShippingAddress.City,
+                order.ShippingAddress.State,
+                order.ShippingAddress.PostCode,
+                order.ShippingAddress.Country));
 }

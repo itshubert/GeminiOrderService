@@ -1,6 +1,6 @@
 # @HostAddress=https://localhost:4003
 @HostAddress=https://localhost:10001
-@AccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YTJkYWEzOC1jMDdiLTQ3NWYtYmQxZi04YzlkZDgwMTEwZGEiLCJnaXZlbl9uYW1lIjoiSHViZXJ0IiwiZmFtaWx5X25hbWUiOiJEdW1hcyIsImp0aSI6IjY3ZTMwNDQzLTI1MjctNDk3Mi04MzRmLThmOWViOWJhMjMxZSIsImN1c3RvbWVyX2lkIjoiMjI0OTI2MmItNjY0MS00YTI4LWI1NzgtMzc0NzAxMDY2Mjc0IiwiZXhwIjoxNzU5OTA1NDk0LCJpc3MiOiJodHRwczovL2dlbWluaW9wcy5jb20uYXUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAifQ.15ldOmDPfKrkkSnHGaOeUh9GT7PRYTNOzKUh8dSXnzs
+@AccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YTJkYWEzOC1jMDdiLTQ3NWYtYmQxZi04YzlkZDgwMTEwZGEiLCJnaXZlbl9uYW1lIjoiSHViZXJ0IiwiZmFtaWx5X25hbWUiOiJEdW1hcyIsImp0aSI6IjlmZGU2OGIwLTE5M2ItNDU0NS1iNDQ0LTdjOWU2ZDAwM2M3YyIsImN1c3RvbWVyX2lkIjoiMjI0OTI2MmItNjY0MS00YTI4LWI1NzgtMzc0NzAxMDY2Mjc0IiwiZXhwIjoxNzU5OTU5ODE1LCJpc3MiOiJodHRwczovL2dlbWluaW9wcy5jb20uYXUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAifQ.ctQUv1Ef3SQ8YaFslpib_7vO1rz546HT3T9PKvE0GN4
 
 GET {{HostAddress}}/orders?pageNumber=2&pageSize=5
 
@@ -54,9 +54,9 @@ Content-Type: application/json
 
 {
   "customerId": "2249262b-6641-4a28-b578-374701066274",
-  "firstName": "John",
-  "lastName": "Citizen",
-  "email": "john.citizen@example.com",
+  "firstName": "Hubert",
+  "lastName": "Dumas",
+  "email": "hubert.dumas@example.com",
   "currency": "AUD",
   "shippingAddress": {
     "addressLine1": "123 Main St",

@@ -1,3 +1,4 @@
+using GeminiOrderService.Api.Common.Mappings;
 using GeminiOrderService.Application.Common.Interfaces;
 using GeminiOrderService.Application.Orders.Commands;
 using GeminiOrderService.Application.Orders.Queries;
@@ -64,15 +65,17 @@ public sealed class OrdersController : BaseController
             customerId = request.CustomerId.Value;
         }
 
-        var command = new CreateOrderCommand(
-            customerId,
-            request.Currency,
-            Mapper.Map<ShippingAddressCommand>(request.ShippingAddress),
-            request.Items.Select(i => new CreateOrderItemCommand(
-                i.ProductId,
-                i.Quantity,
-                i.UnitPrice
-            )));
+        // var command = new CreateOrderCommand(
+        //     customerId,
+        //     request.Currency,
+        //     Mapper.Map<ShippingAddressCommand>(request.ShippingAddress),
+        //     request.Items.Select(i => new CreateOrderItemCommand(
+        //         i.ProductId,
+        //         i.Quantity,
+        //         i.UnitPrice
+        //     )));
+
+        var command = request.ToCreateOrderCommand();
 
         var result = await Mediator.Send(command, cancellationToken);
 
