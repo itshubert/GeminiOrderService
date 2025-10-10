@@ -69,6 +69,11 @@ public static class DependencyInjectionRegister
         {
             return sp.GetRequiredService<IOptions<QueueSettings>>().Value.OrderStockFailed ?? string.Empty;
         });
+        services.AddMessaging<JobInProgressEvent, JobInProgressEventProcessor>(sp =>
+        {
+            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.JobInProgress ?? string.Empty;
+        });
+
 
         services.AddScoped<PublishDomainEventsInterceptor>();
         services.AddScoped<IOrderRepository, OrderRepository>();

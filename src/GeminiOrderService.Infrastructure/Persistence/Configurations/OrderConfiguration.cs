@@ -35,7 +35,7 @@ public sealed class OrderConfiguration : IEntityTypeConfiguration<Order>
         // Add CHECK constraint to ensure only valid OrderStatus values
         builder.ToTable(t => t.HasCheckConstraint(
             "CK_Orders_Status",
-            "\"Status\" IN ('Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled')"));
+            "\"Status\" IN ('Pending', 'InProgress', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled')"));
 
         builder.Property(o => o.Currency)
             .IsRequired()

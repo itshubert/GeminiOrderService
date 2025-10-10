@@ -16,6 +16,7 @@ public static class OrderStatusMappingExtensions
         {
             ApplicationOrderStatus.Pending => DomainOrderStatus.Pending,
             ApplicationOrderStatus.Confirmed => DomainOrderStatus.Confirmed,
+            ApplicationOrderStatus.InProgress => DomainOrderStatus.InProgress,
             ApplicationOrderStatus.Shipped => DomainOrderStatus.Shipped,
             ApplicationOrderStatus.Delivered => DomainOrderStatus.Delivered,
             ApplicationOrderStatus.Cancelled => DomainOrderStatus.Cancelled,
@@ -35,6 +36,7 @@ public static class OrderStatusMappingExtensions
         {
             DomainOrderStatus.Pending => ApplicationOrderStatus.Pending,
             DomainOrderStatus.Confirmed => ApplicationOrderStatus.Confirmed,
+            DomainOrderStatus.InProgress => ApplicationOrderStatus.InProgress,
             DomainOrderStatus.Shipped => ApplicationOrderStatus.Shipped,
             DomainOrderStatus.Delivered => ApplicationOrderStatus.Delivered,
             DomainOrderStatus.Cancelled => ApplicationOrderStatus.Cancelled,

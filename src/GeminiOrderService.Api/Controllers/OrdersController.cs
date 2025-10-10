@@ -1,6 +1,5 @@
 using GeminiOrderService.Api.Common.Mappings;
 using GeminiOrderService.Application.Common.Interfaces;
-using GeminiOrderService.Application.Orders.Commands;
 using GeminiOrderService.Application.Orders.Queries;
 using GeminiOrderService.Contracts;
 using GeminiOrderService.Contracts.Orders;

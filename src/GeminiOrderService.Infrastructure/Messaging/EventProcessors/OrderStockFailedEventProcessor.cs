@@ -18,7 +18,7 @@ public sealed class OrderStockFailedEventProcessor : IEventProcessor<OrderStockF
         _logger = logger;
     }
 
-    public async Task ProcessEventAsync(OrderStockFailedEvent @event, CancellationToken cancellationToken)
+    public async Task<bool> ProcessEventAsync(OrderStockFailedEvent @event, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Processing OrderStockFailedEvent: {EventId}", @event.OrderId);
 
@@ -30,11 +30,11 @@ public sealed class OrderStockFailedEventProcessor : IEventProcessor<OrderStockF
             {
                 _logger.LogError("Error cancelling order for OrderId {OrderId}: {Error}", @event.OrderId, error);
             }
+
+            return false;
         }
-        else
-        {
-            _logger.LogInformation("Successfully cancelled order for OrderId {OrderId}", @event.OrderId);
-        }
+
+        _logger.LogInformation("Successfully cancelled order for OrderId {OrderId}", @event.OrderId);
 
         // TODO: Create failed orders table for auditing purposes
         foreach (var item in @event.FailedItems)
@@ -42,5 +42,6 @@ public sealed class OrderStockFailedEventProcessor : IEventProcessor<OrderStockF
             _logger.LogWarning("OrderId {OrderId} - ProductId {ProductId} failed due to: {Reason}", @event.OrderId, item.ProductId, item.Reason);
         }
 
+        return true;
     }
 }

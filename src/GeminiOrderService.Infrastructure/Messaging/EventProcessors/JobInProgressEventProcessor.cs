@@ -7,22 +7,22 @@ using Microsoft.Extensions.Logging;
 
 namespace GeminiOrderService.Infrastructure.Messaging.EventProcessors;
 
-public sealed class InventoryReservedEventProcessor : IEventProcessor<InventoryReservedEvent>
+public sealed class JobInProgressEventProcessor : IEventProcessor<JobInProgressEvent>
 {
     private readonly IMediator _mediator;
-    private readonly ILogger<InventoryReservedEventProcessor> _logger;
+    private readonly ILogger<JobInProgressEventProcessor> _logger;
 
-    public InventoryReservedEventProcessor(IMediator mediator, ILogger<InventoryReservedEventProcessor> logger)
+    public JobInProgressEventProcessor(IMediator mediator, ILogger<JobInProgressEventProcessor> logger)
     {
         _mediator = mediator;
         _logger = logger;
     }
 
-    public async Task<bool> ProcessEventAsync(InventoryReservedEvent @event, CancellationToken cancellationToken)
+    public async Task<bool> ProcessEventAsync(JobInProgressEvent @event, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Processing InventoryReservedEvent: {EventId}", @event.OrderId);
+        _logger.LogInformation("Processing JobInProgressEvent: {EventId}", @event.JobId);
 
-        var result = await _mediator.Send(new UpdateOrderStatusCommand(@event.OrderId, OrderStatus.Confirmed), cancellationToken);
+        var result = await _mediator.Send(new UpdateOrderStatusCommand(@event.OrderId, OrderStatus.InProgress), cancellationToken);
 
         if (result.IsError)
         {

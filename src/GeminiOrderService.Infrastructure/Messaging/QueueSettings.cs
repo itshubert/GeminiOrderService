@@ -4,4 +4,5 @@ public sealed class QueueSettings
 {
     public string InventoryReserved { get; set; } = string.Empty;
     public string OrderStockFailed { get; set; } = string.Empty;
+    public string JobInProgress { get; set; } = string.Empty;
 }
