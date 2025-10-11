@@ -61,24 +61,42 @@ public static class DependencyInjectionRegister
         services.AddScoped<IEventBridgePublisher, EventBridgePublisher>();
 
         services.Configure<QueueSettings>(configuration.GetSection("QueueSettings"));
-        services.AddMessaging<InventoryReservedEvent, InventoryReservedEventProcessor>(sp =>
-        {
-            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.InventoryReserved ?? string.Empty;
-        });
-        services.AddMessaging<OrderStockFailedEvent, OrderStockFailedEventProcessor>(sp =>
-        {
-            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.OrderStockFailed ?? string.Empty;
-        });
-        services.AddMessaging<JobInProgressEvent, JobInProgressEventProcessor>(sp =>
-        {
-            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.JobInProgress ?? string.Empty;
-        });
-
+        services.AddSqsMessageProcessors();
 
         services.AddScoped<PublishDomainEventsInterceptor>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<ICatalogService, CatalogService>();
         services.AddScoped<ICustomerService, CustomerService>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddSqsMessageProcessors(this IServiceCollection services)
+    {
+        services.AddMessaging<InventoryReservedEvent, InventoryReservedEventProcessor>(sp =>
+        {
+            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.InventoryReserved ?? string.Empty;
+        });
+
+        services.AddMessaging<OrderStockFailedEvent, OrderStockFailedEventProcessor>(sp =>
+        {
+            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.OrderStockFailed ?? string.Empty;
+        });
+
+        services.AddMessaging<JobInProgressEvent, JobInProgressEventProcessor>(sp =>
+        {
+            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.JobInProgress ?? string.Empty;
+        });
+
+        services.AddMessaging<LabelGeneratedEvent, LabelGeneratedEventProcessor>(sp =>
+        {
+            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.LabelGenerated ?? string.Empty;
+        });
+
+        services.AddMessaging<OrderShippedEvent, OrderShippedEventProcessor>(sp =>
+        {
+            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.OrderShipped ?? string.Empty;
+        });
 
         return services;
     }
