@@ -7,20 +7,20 @@ using Microsoft.Extensions.Logging;
 
 namespace GeminiOrderService.Infrastructure.Messaging.EventProcessors;
 
-public sealed class JobInProgressEventProcessor : IEventProcessor<JobInProgressEvent>
+public sealed class OrderInProgressEventProcessor : IEventProcessor<OrderInProgressEvent>
 {
     private readonly IMediator _mediator;
-    private readonly ILogger<JobInProgressEventProcessor> _logger;
+    private readonly ILogger<OrderInProgressEventProcessor> _logger;
 
-    public JobInProgressEventProcessor(IMediator mediator, ILogger<JobInProgressEventProcessor> logger)
+    public OrderInProgressEventProcessor(IMediator mediator, ILogger<OrderInProgressEventProcessor> logger)
     {
         _mediator = mediator;
         _logger = logger;
     }
 
-    public async Task<bool> ProcessEventAsync(JobInProgressEvent @event, CancellationToken cancellationToken)
+    public async Task<bool> ProcessEventAsync(OrderInProgressEvent @event, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Processing JobInProgressEvent: {EventId}", @event.JobId);
+        _logger.LogInformation("Processing OrderInProgressEventProcessor: {EventId}", @event.JobId);
 
         var result = await _mediator.Send(new UpdateOrderStatusCommand(@event.OrderId, OrderStatus.InProgress), cancellationToken);
 

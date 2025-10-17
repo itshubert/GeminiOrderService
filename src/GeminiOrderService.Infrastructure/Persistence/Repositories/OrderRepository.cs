@@ -48,6 +48,14 @@ public sealed class OrderRepository : BaseRepository, IOrderRepository
         return order;
     }
 
+    public async Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        return await _context.Orders
+            .Where(o => o.CustomerId == customerId)
+            .Include(o => o.Items)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Order> CreateOrderAsync(Order order, CancellationToken cancellationToken = default)
     {
         _context.Orders.Add(order);

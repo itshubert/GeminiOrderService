@@ -83,14 +83,14 @@ public static class DependencyInjectionRegister
             return sp.GetRequiredService<IOptions<QueueSettings>>().Value.OrderStockFailed ?? string.Empty;
         });
 
-        services.AddMessaging<JobInProgressEvent, JobInProgressEventProcessor>(sp =>
+        services.AddMessaging<OrderInProgressEvent, OrderInProgressEventProcessor>(sp =>
         {
-            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.JobInProgress ?? string.Empty;
+            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.OrderInProgress ?? string.Empty;
         });
 
-        services.AddMessaging<LabelGeneratedEvent, LabelGeneratedEventProcessor>(sp =>
+        services.AddMessaging<OrderReadyForShipmentEvent, OrderReadyForShipmentEventProcessor>(sp =>
         {
-            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.LabelGenerated ?? string.Empty;
+            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.OrderReadyForShipment ?? string.Empty;
         });
 
         services.AddMessaging<OrderShippedEvent, OrderShippedEventProcessor>(sp =>

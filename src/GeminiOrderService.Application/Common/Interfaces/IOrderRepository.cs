@@ -12,6 +12,7 @@ public interface IOrderRepository : IRepository
         CancellationToken cancellationToken = default);
 
     Task<Order?> GetOrderForUpdateAsync(Guid orderId, CancellationToken cancellationToken = default);
+    Task<IEnumerable<Order>> GetOrdersByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default);
 
     Task<Order> CreateOrderAsync(Order order, CancellationToken cancellationToken = default);
 }

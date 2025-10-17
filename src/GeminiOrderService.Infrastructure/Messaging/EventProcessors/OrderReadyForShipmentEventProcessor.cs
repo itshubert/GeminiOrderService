@@ -6,20 +6,20 @@ using Microsoft.Extensions.Logging;
 
 namespace GeminiOrderService.Infrastructure.Messaging.EventProcessors;
 
-public sealed class LabelGeneratedEventProcessor : IEventProcessor<LabelGeneratedEvent>
+public sealed class OrderReadyForShipmentEventProcessor : IEventProcessor<OrderReadyForShipmentEvent>
 {
     private readonly IMediator _mediator;
-    private readonly ILogger<LabelGeneratedEventProcessor> _logger;
+    private readonly ILogger<OrderReadyForShipmentEventProcessor> _logger;
 
-    public LabelGeneratedEventProcessor(IMediator mediator, ILogger<LabelGeneratedEventProcessor> logger)
+    public OrderReadyForShipmentEventProcessor(IMediator mediator, ILogger<OrderReadyForShipmentEventProcessor> logger)
     {
         _mediator = mediator;
         _logger = logger;
     }
 
-    public async Task<bool> ProcessEventAsync(LabelGeneratedEvent @event, CancellationToken cancellationToken)
+    public async Task<bool> ProcessEventAsync(OrderReadyForShipmentEvent @event, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Processing LabelGeneratedEvent: {OrderId}", @event.OrderId);
+        _logger.LogInformation("Processing OrderReadyForShipmentEvent: {OrderId}", @event.OrderId);
 
         var result = await _mediator.Send(new UpdateOrderStatusCommand(@event.OrderId, Application.Common.Models.Orders.OrderStatus.ReadyForShipment), cancellationToken);
 
@@ -38,3 +38,4 @@ public sealed class LabelGeneratedEventProcessor : IEventProcessor<LabelGenerate
         return true;
     }
 }
+

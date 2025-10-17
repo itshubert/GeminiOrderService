@@ -83,4 +83,19 @@ public sealed class OrdersController : BaseController
             Problem);
     }
 
+    [HttpGet("by-customer/{customerId:guid}")]
+    public async Task<IActionResult> GetOrdersByCustomer(
+        Guid customerId,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetOrdersByCustomerQuery(
+            customerId,
+            cancellationToken);
+
+        var orders = await Mediator.Send(query, cancellationToken);
+        var items = Mapper.Map<IEnumerable<OrderResponse>>(orders);
+
+        return Ok(items);
+    }
+
 }

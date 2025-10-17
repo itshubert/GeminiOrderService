@@ -1,6 +1,6 @@
 namespace GeminiOrderService.Infrastructure.Messaging.Events;
 
-public sealed record LabelGeneratedEvent(
+public sealed record OrderReadyForShipmentEvent(
     Guid OrderId,
     string TrackingNumber
 );
