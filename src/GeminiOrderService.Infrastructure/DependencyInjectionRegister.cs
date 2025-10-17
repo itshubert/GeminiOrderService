@@ -98,6 +98,11 @@ public static class DependencyInjectionRegister
             return sp.GetRequiredService<IOptions<QueueSettings>>().Value.OrderShipped ?? string.Empty;
         });
 
+        services.AddMessaging<OrderDeliveredEvent, OrderDeliveredEventProcessor>(sp =>
+        {
+            return sp.GetRequiredService<IOptions<QueueSettings>>().Value.OrderDelivered ?? string.Empty;
+        });
+
         return services;
     }
 
