@@ -27,12 +27,13 @@ public static class DependencyInjectionRegister
     {
         services.AddDbContext<GeminiOrderDbContext>(options =>
         {
-            var connectionString = configuration.GetConnectionString("GeminiOrderDbContext");
+            var connectionString = configuration.GetConnectionString("GeminiOrdersDbContext");
             options.UseNpgsql(connectionString);
         });
 
         services.AddSingleton<IAmazonSQS>(sp =>
         {
+            var logger = sp.GetRequiredService<ILogger<IAmazonSQS>>();
             var useLocalStack = configuration.GetValue<bool>("AWS:UseLocalStack");
 
             if (useLocalStack)
@@ -42,18 +43,23 @@ public static class DependencyInjectionRegister
                 return new AmazonSQSClient(new AnonymousAWSCredentials(), config);
             }
 
+
+            // Get region from configuration or environment variable
+            var region = configuration["AWS:Region"] ?? Environment.GetEnvironmentVariable("AWS_REGION") ?? "us-east-1";
+            logger.LogInformation("Configuring AmazonSQSClient for AWS region {Region}", region);
             var profileName = Environment.GetEnvironmentVariable("AWS_PROFILE");
+
             if (!string.IsNullOrEmpty(profileName))
             {
                 var credentialProfileStoreChain = new CredentialProfileStoreChain();
                 if (credentialProfileStoreChain.TryGetProfile(profileName, out var profile))
                 {
                     var credentials = profile.GetAWSCredentials(credentialProfileStoreChain);
-                    return new AmazonSQSClient(credentials, RegionEndpoint.GetBySystemName("ap-southeast-2"));
+                    return new AmazonSQSClient(credentials, RegionEndpoint.GetBySystemName(region));
                 }
             }
 
-            return new AmazonSQSClient(RegionEndpoint.GetBySystemName("ap-southeast-2"));
+            return new AmazonSQSClient(RegionEndpoint.GetBySystemName(region));
         });
 
         services.AddGeminiServices(configuration);

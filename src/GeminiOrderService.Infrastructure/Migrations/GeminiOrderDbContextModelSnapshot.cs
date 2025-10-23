@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GeminiOrderService.Infrastructure.Migrations
 {
     [DbContext(typeof(GeminiOrderDbContext))]
-    partial class GeminiOrderDbContextModelSnapshot : ModelSnapshot
+    partial class GeminiOrdersDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
