@@ -1,6 +1,5 @@
 using GeminiOrderService.Application.Common.Mappings;
 using GeminiOrderService.Application.Common.Messaging;
-using GeminiOrderService.Application.Common.Models.Orders;
 using GeminiOrderService.Domain.Orders.Events;
 using MapsterMapper;
 using MediatR;
