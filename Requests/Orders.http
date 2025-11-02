@@ -1,6 +1,6 @@
-#@HostAddress=https://localhost:4003
+#@HostAddress=http://localhost:4002
 @HostAddress=https://localhost:10001
-@AccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5YTJkYWEzOC1jMDdiLTQ3NWYtYmQxZi04YzlkZDgwMTEwZGEiLCJnaXZlbl9uYW1lIjoiSHViZXJ0IiwiZmFtaWx5X25hbWUiOiJEdW1hcyIsImp0aSI6IjQ5N2NlYWE1LTA4NTktNGY3Zi1iODI0LTcxNjYyMDU2YjJmMiIsImN1c3RvbWVyX2lkIjoiMjI0OTI2MmItNjY0MS00YTI4LWI1NzgtMzc0NzAxMDY2Mjc0IiwiZXhwIjoxNzYwMDUwOTAwLCJpc3MiOiJodHRwczovL2dlbWluaW9wcy5jb20uYXUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAifQ.g4e0N_Wcy6FJCwz1Hy_lK12kYDUSdAUbBr55-ozn4Lo
+@AccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhYTkyZTI0Yy0wZjM2LTRiYjktYjgzYi0xMzgyYjI1ZmQzYzEiLCJnaXZlbl9uYW1lIjoiSHViZXJ0IiwiZmFtaWx5X25hbWUiOiJEdW1hcyIsImp0aSI6IjM0Mzg4YmY5LTQ2YzYtNDAyOC05OWUwLTYzYzM4NDRhYmY3ZSIsImN1c3RvbWVyX2lkIjoiNGZmYmU3M2YtNzJkNi00NmMyLThkYTMtM2ZhYTUwMGZhZmY5IiwiZXhwIjoxNzYyMDY1ODM3LCJpc3MiOiJodHRwczovL2dlbWluaW9wcy5jb20uYXUiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjMwMDAifQ.F6UkYMuN4xHtL569CpLNR5ayqe4nOH7ouYzo9iz7_ek
 
 GET {{HostAddress}}/orders?pageNumber=2&pageSize=5
 
@@ -57,10 +57,10 @@ Authorization: Bearer {{AccessToken}}
 Content-Type: application/json
 
 {
-  "customerId": "2249262b-6641-4a28-b578-374701066274",
+  "customerId": "4ffbe73f-72d6-46c2-8da3-3faa500faff9",
   "firstName": "Hubert",
   "lastName": "Dumas",
-  "email": "hubert.dumas@example.com",
+  "email": "hubertd@example.com",
   "currency": "AUD",
   "shippingAddress": {
     "addressLine1": "123 Main St",
@@ -72,14 +72,9 @@ Content-Type: application/json
   },
   "Items": [
     {
-      "productId": "00d5d543-71a1-4149-ae8b-6695a38d448c",
+      "productId": "31b52f2c-15e9-4c1c-a16b-cea8b399c079",
       "quantity": 2,
       "unitPrice": 89.99
-    },
-    {
-      "productId": "1a308cf3-2bea-45cd-9575-c396db342ad3",
-      "quantity": 1,
-      "unitPrice": 149.99
     }
   ]
 }
